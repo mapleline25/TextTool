@@ -41,7 +41,7 @@ The `Search name` field supports the following syntax:
 
 ### Everything API integration
 This software also integrates [Everything](https://www.voidtools.com/) API to search files, which can provide a faster search speed.
-When Everything is running, the `Search` window will automatically uses Everything to retrieve search results.
+You can additionally install Everything and run it in the background, then the `Search` window will automatically use Everything to retrieve search results.
 
 ## Encoding convertion
 You can use the `Convert to...` menu in the right-click menu to convert the encoding of file to a specified Unicode encoding.
