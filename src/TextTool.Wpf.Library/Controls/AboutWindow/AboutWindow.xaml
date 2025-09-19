@@ -1,0 +1,27 @@
+﻿<Window x:Class="TextTool.Wpf.Library.Controls.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:TextTool.Wpf.Library.Controls"
+        xmlns:libcm="clr-namespace:TextTool.Library.ComponentModel;assembly=TextTool.Library"
+        d:DataContext="{d:DesignInstance Type=libcm:AboutViewModel}"
+        mc:Ignorable="d"
+        ShowInTaskbar="False"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        Title="About" Height="400" Width="600">
+    
+    <Grid Margin="20">
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Margin="0,0,0,10" HorizontalAlignment="Stretch"
+                       Text="{Binding ProductText}"/>
+            <Button Content="Close" DockPanel.Dock="Bottom" HorizontalAlignment="Right" 
+                    Padding="3" Width="100" Margin="0,10,0,0" 
+                    Command="{Binding CloseCommand, RelativeSource={RelativeSource AncestorType=controls:AboutWindow}}"/>
+            <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <TextBlock x:Name="LicenseText" TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</Window>

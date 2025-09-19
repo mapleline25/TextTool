@@ -1,0 +1,126 @@
+﻿<Window x:Class="TextTool.Wpf.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:view="clr-namespace:TextTool.Wpf.Views"
+        xmlns:control="clr-namespace:TextTool.Wpf.Library.Controls;assembly=TextTool.Wpf.Library"
+        xmlns:converter="clr-namespace:TextTool.Wpf.Library.Converters;assembly=TextTool.Wpf.Library"
+        xmlns:libcm="clr-namespace:TextTool.Library.ComponentModel;assembly=TextTool.Library"
+        xmlns:vm="clr-namespace:TextTool.Core.ViewModels;assembly=TextTool.Core"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        mc:Ignorable="d"
+        Title="TextTool" Height="450" Width="800">
+    <Window.Resources>
+        <vm:MainViewModel x:Key="VM"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <Binding Source="{StaticResource VM}"/>
+    </Window.DataContext>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Menu DockPanel.Dock="Left">
+                <MenuItem>
+                    <MenuItem.Header>
+                        <TextBlock Text="File" Padding="3" />
+                    </MenuItem.Header>
+                    <MenuItem Header="Open..." Command="{Binding OpenFileBrowserCommand, RelativeSource={RelativeSource AncestorType=view:MainWindow}}"/>
+                    <MenuItem Header="Search..." Command="{Binding OpenSearchFileWindowCommand, RelativeSource={RelativeSource AncestorType=view:MainWindow}}"/>
+                </MenuItem>
+            </Menu>
+            <Menu DockPanel.Dock="Left">
+                <MenuItem Header="About" Padding="3" Command="{Binding OpenAboutWindowCommand, RelativeSource={RelativeSource AncestorType=view:MainWindow}}"/>
+            </Menu>
+        </DockPanel>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem Width="100">
+                <TextBlock Text="{Binding ItemsCountText}" />
+            </StatusBarItem>
+            <Separator Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource SeparatorStyle}"/>
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusText}" />
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="{Binding ProgressText}" />
+            </StatusBarItem>
+        </StatusBar>
+        <ListView x:Name="MainListView"
+                  BorderThickness="0"
+                  AllowDrop="True"
+                  SelectionMode="Extended"
+                  FocusVisualStyle="{x:Null}"
+                  VirtualizingPanel.VirtualizationMode="Recycling"
+                  control:ListViewService.EnableAttachedStyle="True"
+                  control:ListViewService.EnableInputHelper="True"
+                  control:ListViewService.EnableDragSelector="True"
+                  control:ListViewService.DragSelectorStyle="{StaticResource DragSelectorStyle}"
+                  control:ListViewService.ItemsUpdater="{Binding ItemsUpdater}"
+                  >
+            <ListView.Resources>
+                <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource ListViewTextBlockStyle}"/>
+                <Style TargetType="{x:Type ToolTip}" BasedOn="{StaticResource ToolTipStyle}"/>
+                <control:SortDefinition x:Key="SortDefinition">
+                    <scm:SortDescription PropertyName="FileName"/>
+                    <scm:SortDescription PropertyName="LastModifiedTime"/>
+                    <scm:SortDescription PropertyName="FileType"/>
+                    <scm:SortDescription PropertyName="EncodingName"/>
+                    <scm:SortDescription PropertyName="FileDirectory"/>
+                    <scm:SortDescription PropertyName="Id"/>
+                </control:SortDefinition>
+            </ListView.Resources>
+            <control:ListViewService.ItemSortDefinition>
+                <Binding Source="{StaticResource SortDefinition}"/>
+            </control:ListViewService.ItemSortDefinition>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DataContext.Existed, RelativeSource={RelativeSource Self}}" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn Width="150" DisplayMemberBinding="{Binding FileName}">
+                        <GridViewColumnHeader Content="File name"/>
+                    </GridViewColumn>
+                    <GridViewColumn Width="100" DisplayMemberBinding="{Binding LastModifiedTime, Converter={converter:DateTimeConverter}}">
+                        <GridViewColumnHeader Content="Modified time"/>
+                    </GridViewColumn>
+                    <GridViewColumn Width="100" DisplayMemberBinding="{Binding FileType}">
+                        <GridViewColumnHeader Content="File type"/>
+                    </GridViewColumn>
+                    <GridViewColumn Width="100" DisplayMemberBinding="{Binding EncodingName}">
+                        <GridViewColumnHeader Content="Encoding"/>
+                    </GridViewColumn>
+                    <GridViewColumn Width="300" DisplayMemberBinding="{Binding FileDirectory}">
+                        <GridViewColumnHeader Content="File directory"/>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+            <ListView.InputBindings>
+                <KeyBinding Key="F5" Command="{Binding RefreshAllItemsCommand}"/>
+                <KeyBinding Key="Delete" Command="{Binding DeleteItemsCommand}" CommandParameter="{Binding SelectedItems, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
+            </ListView.InputBindings>
+            <ListView.ContextMenu>
+                <ContextMenu Name="MainContextMenu" StaysOpen="true" ItemsSource="{Binding MenuItemViewModels}">
+                    <ContextMenu.Resources>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Items}" DataType="{x:Type libcm:MenuItemViewModel}">
+                            <TextBlock Text="{Binding Name}"/>
+                        </HierarchicalDataTemplate>
+                    </ContextMenu.Resources>
+                    <ContextMenu.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Setter Property="Header" Value="{Binding Name}" />
+                            <Setter Property="Command" Value="{Binding Command}" />
+                            <Setter Property="CommandParameter" 
+                                    Value="{Binding PlacementTarget.SelectedItems, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                        </Style>
+                    </ContextMenu.ItemContainerStyle>
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+    </DockPanel>
+</Window>

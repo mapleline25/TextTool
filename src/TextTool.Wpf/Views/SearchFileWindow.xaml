@@ -1,0 +1,110 @@
+﻿<Window x:Class="TextTool.Wpf.Views.SearchFileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:view="clr-namespace:TextTool.Wpf.Views"
+        xmlns:control="clr-namespace:TextTool.Wpf.Library.Controls;assembly=TextTool.Wpf.Library"
+        xmlns:vm="clr-namespace:TextTool.Core.ViewModels;assembly=TextTool.Core"
+        d:DataContext="{d:DesignInstance Type=vm:SearchFileViewModel}"
+        mc:Ignorable="d"
+        ShowInTaskbar="False"
+        WindowStyle="ToolWindow"
+        Title="Search" Height="450" MinHeight="450" Width="600" MinWidth="600">
+    <Window.Resources>
+        <vm:SearchFileViewModel x:Key="VM"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <Binding Source="{StaticResource VM}"/>
+    </Window.DataContext>
+    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20">
+        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+            <TextBlock Text="Directory path:" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,0,0,3"/>
+            <Button Content="Browse..." DockPanel.Dock="Right" Width="70"
+                    Command="{Binding OpenFolderCommand, RelativeSource={RelativeSource AncestorType=view:SearchFileWindow}}"/>
+            <TextBox x:Name="SearchDirectory" 
+                     DockPanel.Dock="Left" Padding="3" Width="Auto" 
+                     AcceptsReturn="False"
+                     Text="{Binding SearchDirectory, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding CanSearch}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SearchFileCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,20,0,0">
+            <TextBlock Text="Search name:" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,0,0,3"/>
+            <Button Content="Search" DockPanel.Dock="Right" Width="70"
+                    Command="{Binding SearchFileCommand}"/>
+            <TextBox x:Name="SearchFileName" 
+                     DockPanel.Dock="Left" Padding="3" Width="Auto" 
+                     AcceptsReturn="False"
+                     Text="{Binding SearchFileName, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding CanSearch}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SearchFileCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+            <TextBlock x:Name="SearchStatusText" DockPanel.Dock="Left" Margin="0,20,0,0" Text="{Binding SearchResultText, Mode=OneTime, RelativeSource={RelativeSource AncestorType=view:SearchFileWindow}}"/>
+            <TextBlock DockPanel.Dock="Left" Margin="0,20,0,0" Text="{Binding SearchResultFilesCount, StringFormat={}{0} files}"/>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,20,0,0" >
+            <Button Content="Unselect all" DockPanel.Dock="Right" Padding="3" Width="100"
+                    Command="{Binding UnSelectAllSearchResultsCommand, RelativeSource={RelativeSource AncestorType=view:SearchFileWindow}}"/>
+            <Button Content="Select all" DockPanel.Dock="Right" Padding="3" Margin="0,0,20,0" Width="100"
+                    Command="{Binding SelectAllSearchResultsCommand, RelativeSource={RelativeSource AncestorType=view:SearchFileWindow}}"
+                    CommandParameter="{Binding SelectedItems, ElementName=SearchListView}"/>
+            <Button Content="Stop search" DockPanel.Dock="Right" Padding="3" Margin="0,0,20,0" Width="100"
+                    Command="{Binding CancelSearchFileCommand}"/>
+            <Grid/>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" Margin="0,20,0,0" >
+            <Button Content="Close" DockPanel.Dock="Right" Padding="3" Width="100"
+            Command="{Binding CloseWindowCommand, RelativeSource={RelativeSource AncestorType=view:SearchFileWindow}}"/>
+            <Button Content="Import files" DockPanel.Dock="Right" Padding="3" Margin="0,0,20,0" Width="100"
+            Command="{Binding ImportFileCommand}"
+            CommandParameter="{Binding SelectedItems, ElementName=SearchListView}"/>
+            <Grid/>
+        </DockPanel>
+        <DockPanel HorizontalAlignment="Stretch" Margin="0,20,0,0" >
+            <ListView x:Name="SearchListView"
+                      BorderThickness="1"
+                      AllowDrop="True"
+                      SelectionMode="Extended"
+                      FocusVisualStyle="{x:Null}"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
+                      ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                      control:ListViewService.EnableAttachedStyle="True"
+                      control:ListViewService.EnableInputHelper="True"
+                      control:ListViewService.EnableDragSelector="True"
+                      control:ListViewService.DragSelectorStyle="{StaticResource DragSelectorStyle}"
+                      >
+                <ListView.Resources>
+                    <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource ListViewTextBlockStyle}"/>
+                    <Style TargetType="{x:Type ToolTip}" BasedOn="{StaticResource ToolTipStyle}"/>
+                    <control:SortDefinition x:Key="SortDefinition">
+                        <scm:SortDescription PropertyName="FileName"/>
+                        <scm:SortDescription PropertyName="FileDirectory"/>
+                        <scm:SortDescription PropertyName="Id"/>
+                    </control:SortDefinition>
+                </ListView.Resources>
+                <control:ListViewService.ItemSortDefinition>
+                    <Binding Source="{StaticResource SortDefinition}" />
+                </control:ListViewService.ItemSortDefinition>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Width="150" DisplayMemberBinding="{Binding FileName}">
+                            <GridViewColumnHeader Content="File name"/>
+                        </GridViewColumn>
+                        <GridViewColumn Width="300" DisplayMemberBinding="{Binding FileDirectory}">
+                            <GridViewColumnHeader Content="File directory"/>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+    </DockPanel>
+</Window>

@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Product>TextTool</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\About\About.txt" />
+    <None Remove="Resources\About\ThirdPartyNotices\*.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\About\About.txt" />
+    <Resource Include="Resources\About\ThirdPartyNotices\*.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TextTool.Core\TextTool.Core.csproj" />
+    <ProjectReference Include="..\TextTool.Library\TextTool.Library.csproj" />
+    <ProjectReference Include="..\TextTool.Wpf.Library\TextTool.Wpf.Library.csproj" />
+    <ProjectReference Include="..\TextTool.Wpf.SimpleListCollectionView\TextTool.Wpf.SimpleListCollectionView.csproj" />
+  </ItemGroup>
+
+	<PropertyGroup>
+		<AssemblyName>TextTool</AssemblyName>
+	</PropertyGroup>
+
+</Project>

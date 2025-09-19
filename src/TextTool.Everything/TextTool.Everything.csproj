@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="..\..\libs\x64\Everything64.dll" Link="Everything64.dll" CopyToOutputDirectory="PreserveNewest" Visible="False" />
+  </ItemGroup>
+</Project>
