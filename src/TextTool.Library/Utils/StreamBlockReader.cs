@@ -137,21 +137,18 @@ public class StreamBlockReader : IDisposable
 
         _disposed = true;
 
-        if (_leaveOpen)
-        {
-            return;
-        }
+        ArrayPool<byte>.Shared.Return(_bytes, true);
+        _decoder.Reset();
+        _byteIndex = 0;
+        _byteCount = 0;
 
-        try
+        if (!_leaveOpen)
         {
-            _stream.Close();
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(_bytes, true);
-            _decoder.Reset();
-            _byteIndex = 0;
-            _byteCount = 0;
+            try
+            {
+                _stream.Close();
+            }
+            catch { }
         }
 
         GC.SuppressFinalize(this);
