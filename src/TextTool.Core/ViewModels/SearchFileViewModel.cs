@@ -14,7 +14,6 @@ namespace TextTool.Core.ViewModels;
 public class SearchFileViewModel : ObservableObject
 {
     private const int _TimerInterval = 1000;
-    //private readonly IFileSearch _searcher;
     private readonly object _resultSyncRoot = new();
     private readonly BulkObservableCollection<SearchResultItem> _resultItems;
     private readonly PropertySortComparer _itemComparer;
@@ -30,7 +29,6 @@ public class SearchFileViewModel : ObservableObject
 
     public SearchFileViewModel()
     {
-        //_searcher = GetSearcher();
         _resultItems = [];
         _itemComparer = PropertySortComparer<SearchResultItem>.Create(new SearchResultItemPropertyComparisonProvider());
 
@@ -168,7 +166,6 @@ public class SearchFileViewModel : ObservableObject
         _tokenSource = null;
         _searchTimer.Elapsed -= UpdateResultCount;
         _searchTimer.Dispose();
-        //_searcher.Dispose();
         _resultItems.Clear();
     }
 

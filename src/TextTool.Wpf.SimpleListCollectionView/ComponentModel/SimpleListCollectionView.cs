@@ -263,7 +263,7 @@ public partial class SimpleListCollectionView : ProxyCollectionView, IComparer, 
         }
         else
         {
-            // no other foreign threads can change the source collection, refresh direcly
+            // no other foreign threads can change the source collection, refresh directly
             RefreshCore();
         }
     }
